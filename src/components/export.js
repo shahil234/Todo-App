@@ -1,1 +1,2 @@
-export {default as MainApp} from "./MainApp.jsx";
+export { default as Header } from "./Header";
+export { default as Content } from "./Content";
