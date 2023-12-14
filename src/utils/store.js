@@ -3,6 +3,7 @@ import { configureStore, createSlice } from "@reduxjs/toolkit";
 const initialState = {
   todoList: [],
 };
+
 const todoSlice = createSlice({
   name: "todo",
   initialState,
@@ -19,6 +20,11 @@ const todoSlice = createSlice({
         }
       });
     },
+    deleteTodoItem: (state, action) => {
+      state.todoList = state.todoList.filter((item) => {
+        return item.id !== action.payload.id;
+      });
+    },
   },
 });
 
@@ -31,11 +37,25 @@ const categorySlice = createSlice({
     },
   },
 });
-export const { addTodoItem } = todoSlice.actions;
-export const {updateCategory} = categorySlice.actions;
+
+const showTodoFormSlice = createSlice({
+    name: "todoForm",
+    initialState: {show: false},
+    reducers: {
+        toggle: (state) =>{
+            state.show = !state.show
+        }
+    }
+})
+
+
+export const { addTodoItem, updateTodoItem, deleteTodoItem } =
+  todoSlice.actions;
+export const { updateCategory } = categorySlice.actions;
 export const store = configureStore({
   reducer: {
     todo: todoSlice.reducer,
-    category: categorySlice.reducer
+    category: categorySlice.reducer,
+    showTodoForm: showTodoFormSlice.reducer,
   },
 });

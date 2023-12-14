@@ -18,6 +18,7 @@ function TodoForm({ showTodoForm, setShowTodoForm }) {
       isCompleted
     }
     dispatch(addTodoItem(todoItem));
+    setShowTodoForm(prevState => !prevState);
   }
 
   return (
