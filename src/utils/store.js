@@ -1,73 +1,78 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
+import { json } from "react-router-dom";
 
-const initialState = {
-    todoList: []
+
+const getInitialTodoList = () =>{
+    const todoList = window.localStorage.getItem("todoList");
+    if(todoList){
+        return JSON.parse(todoList);
+    }
+    return [];
 }
-const initialFormState = {show: false};
+const initialState = {
+  todoList: getInitialTodoList()
+};
+
 const todoSlice = createSlice({
-    name:"todo",
-    initialState,
-    reducers:{
-        addTodoItem: (state,action) => {
-            state.todoList.push(action.payload);
-        },
-        removeTodoItem: (state,action) => {
-            state.todoList = state.todoList.filter((todoItem) =>{
-                return todoItem.id !== action.payload.id
-            })
-        },
-        updateTodoItem: (state,action) => {
-            const updatedTodoList = state.todoList.map((todoItem) => {
-                if(todoItem.id === action.payload.id){
-                    return {...todoItem, text: action.payload.text}
-                } 
-                return todoItem;
-            });
-            state.todoList = updatedTodoList
+  name: "todo",
+  initialState,
+  reducers: {
+    addTodoItem: (state, action) => {
+      state.todoList = [...state.todoList, action.payload];
+      window.localStorage.setItem("todoList", JSON.stringify(state.todoList));
+    },
+    updateTodoItem: (state, action) => {
+      state.todoList = state.todoList.map((item) => {
+        if (item.id === action.payload.id) {
+          item.id = action.payload.id;
+          item.text = action.payload.text;
+          item.isCompleted = action.payload.isCompleted;
         }
-    }
-});
-
-const todoForm = createSlice({
-    name: "todoForm",
-    initialState: initialFormState,
-    reducers: {
-        updateShowTodoForm: (state,action) =>{
-            state.show = action.payload
-        }
-    }
-})
-
-const updateTodoSlice = createSlice({
-    name: "isUpdating",
-    initialState: {isUpdating: false,todoId:""},
-    reducers:{
-        updating: (state,action) =>{
-            state.isUpdating = action.payload.isUpdating;
-            state.todoId = action.payload.todoId;
-        },
-    }
+        return item;
+      });
+      window.localStorage.setItem("todoList", JSON.stringify(state.todoList));
+    },
+    deleteTodoItem: (state, action) => {
+      state.todoList = state.todoList.filter((item) => {
+        return item.id !== action.payload.id;
+      });
+      window.localStorage.setItem("todoList",JSON.stringify(state.todoList));
+    },
+  },
 });
 
 const categorySlice = createSlice({
-    name: "category",
-    initialState: {todoCategory: "All"},
-    reducers: {
-        updateCategory: (state,action) =>{
-            state.todoCategory = action.payload
-        }
-    }
-})
+  name: "category",
+  initialState: { category: "all" },
+  reducers: {
+    updateCategory: (state, action) => {
+      state.category = action.payload.category;
+    },
+  },
+});
 
-export const { addTodoItem, removeTodoItem,updateTodoItem} = todoSlice.actions;
-export const {updateShowTodoForm} = todoForm.actions;
-export const {updating} = updateTodoSlice.actions;
+const showTodoFormSlice = createSlice({
+  name: "todoForm",
+  initialState: {
+    showTodoForm: false,
+    showUpdateForm: { show: false, id: null },
+  },
+  reducers: {
+    toggleShowTodoForm: (state, action) => {
+      state.showTodoForm = action.payload.showTodoForm;
+      state.showUpdateForm = action.payload.showUpdateForm;
+    },
+  },
+});
+
+export const { addTodoItem, updateTodoItem, deleteTodoItem } =
+  todoSlice.actions;
 export const { updateCategory } = categorySlice.actions;
-export const todoStore = configureStore({
-    reducer:{
-        todo: todoSlice.reducer,
-        form: todoForm.reducer,
-        update: updateTodoSlice.reducer,
-        category: categorySlice.reducer
-    }
-})
+export const { toggleShowTodoForm } = showTodoFormSlice.actions;
+export const store = configureStore({
+  reducer: {
+    todo: todoSlice.reducer,
+    category: categorySlice.reducer,
+    showTodoForm: showTodoFormSlice.reducer,
+  },
+});
