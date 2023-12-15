@@ -7,8 +7,8 @@ function TodoForm() {
   const todoListLength = useSelector((state) => state.todo.todoList.length); //to access todolist's length
   const [todoText, setTodoText] = useState("");
   const [isCompleted, setIsCompleted] = useState(false);
-  const handleFormClose = () => {
-    dispatch(toggleShowTodoForm());
+  const handleTodoFormClose = () => {
+    dispatch(toggleShowTodoForm({showTodoForm:false, showUpdateForm: { show: false, id: null}}));
   };
 
   const handleAddBtnClick = () =>{
@@ -20,7 +20,7 @@ function TodoForm() {
     if(todoItem.text !== ""){
       dispatch(addTodoItem(todoItem));
     }
-    handleFormClose();
+    handleTodoFormClose();
   }
 
   return (
@@ -58,7 +58,7 @@ function TodoForm() {
               Add Task
             </button>
             <button
-              onClick={handleFormClose}
+              onClick={handleTodoFormClose}
               className="bg-[#CCCDDE] text-[#7C7C7F] font-medium py-2 px-4 rounded-md"
             >
               Cancel
@@ -67,7 +67,7 @@ function TodoForm() {
         </div>
         <button
           className="absolute top-[-50px] right-0 w-10 h-10 bg-white text-black text-4xl flex items-center justify-center rounded-md hover:bg-[#E32525] hover:text-white hover:duration-500"
-          onClick={handleFormClose}
+          onClick={handleTodoFormClose}
         >
           <RxCross2 />
         </button>

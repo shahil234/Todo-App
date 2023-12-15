@@ -1,7 +1,16 @@
 import { configureStore, createSlice } from "@reduxjs/toolkit";
+import { json } from "react-router-dom";
 
+
+const getInitialTodoList = () =>{
+    const todoList = window.localStorage.getItem("todoList");
+    if(todoList){
+        return JSON.parse(todoList);
+    }
+    return [];
+}
 const initialState = {
-  todoList: [],
+  todoList: getInitialTodoList()
 };
 
 const todoSlice = createSlice({
@@ -10,6 +19,7 @@ const todoSlice = createSlice({
   reducers: {
     addTodoItem: (state, action) => {
       state.todoList = [...state.todoList, action.payload];
+      window.localStorage.setItem("todoList", JSON.stringify(state.todoList));
     },
     updateTodoItem: (state, action) => {
       state.todoList = state.todoList.map((item) => {
@@ -20,11 +30,13 @@ const todoSlice = createSlice({
         }
         return item;
       });
+      window.localStorage.setItem("todoList", JSON.stringify(state.todoList));
     },
     deleteTodoItem: (state, action) => {
       state.todoList = state.todoList.filter((item) => {
         return item.id !== action.payload.id;
       });
+      window.localStorage.setItem("todoList",JSON.stringify(state.todoList));
     },
   },
 });
@@ -40,20 +52,23 @@ const categorySlice = createSlice({
 });
 
 const showTodoFormSlice = createSlice({
-    name: "todoForm",
-    initialState: {show: false, isUpdateForm: false},
-    reducers: {
-        toggleShowTodoForm: (state) =>{
-            state.show = !state.show;
-        }
-    }
-})
-
+  name: "todoForm",
+  initialState: {
+    showTodoForm: false,
+    showUpdateForm: { show: false, id: null },
+  },
+  reducers: {
+    toggleShowTodoForm: (state, action) => {
+      state.showTodoForm = action.payload.showTodoForm;
+      state.showUpdateForm = action.payload.showUpdateForm;
+    },
+  },
+});
 
 export const { addTodoItem, updateTodoItem, deleteTodoItem } =
   todoSlice.actions;
 export const { updateCategory } = categorySlice.actions;
-export const {toggleShowTodoForm} = showTodoFormSlice.actions;
+export const { toggleShowTodoForm } = showTodoFormSlice.actions;
 export const store = configureStore({
   reducer: {
     todo: todoSlice.reducer,
