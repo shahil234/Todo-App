@@ -1,14 +1,14 @@
 import React, { useId, useReducer, useState } from "react";
 import { RxCross2 } from "react-icons/rx";
-import {addTodoItem} from "../utils/store";
+import { addTodoItem, toggleShowTodoForm } from "../utils/store";
 import { useSelector,useDispatch } from "react-redux";
-function TodoForm({ showTodoForm, setShowTodoForm }) {
+function TodoForm() {
   const dispatch = useDispatch();
   const todoListLength = useSelector((state) => state.todo.todoList.length); //to access todolist's length
   const [todoText, setTodoText] = useState("");
   const [isCompleted, setIsCompleted] = useState(false);
   const handleFormClose = () => {
-    setShowTodoForm((prevState) => !prevState);
+    dispatch(toggleShowTodoForm());
   };
 
   const handleAddBtnClick = () =>{
@@ -17,8 +17,10 @@ function TodoForm({ showTodoForm, setShowTodoForm }) {
       text: todoText,
       isCompleted
     }
-    dispatch(addTodoItem(todoItem));
-    setShowTodoForm(prevState => !prevState);
+    if(todoItem.text !== ""){
+      dispatch(addTodoItem(todoItem));
+    }
+    handleFormClose();
   }
 
   return (

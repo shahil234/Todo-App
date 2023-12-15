@@ -18,6 +18,7 @@ const todoSlice = createSlice({
           item.text = action.payload.text;
           item.isCompleted = action.payload.isCompleted;
         }
+        return item;
       });
     },
     deleteTodoItem: (state, action) => {
@@ -40,10 +41,10 @@ const categorySlice = createSlice({
 
 const showTodoFormSlice = createSlice({
     name: "todoForm",
-    initialState: {show: false},
+    initialState: {show: false, isUpdateForm: false},
     reducers: {
-        toggle: (state) =>{
-            state.show = !state.show
+        toggleShowTodoForm: (state) =>{
+            state.show = !state.show;
         }
     }
 })
@@ -52,6 +53,7 @@ const showTodoFormSlice = createSlice({
 export const { addTodoItem, updateTodoItem, deleteTodoItem } =
   todoSlice.actions;
 export const { updateCategory } = categorySlice.actions;
+export const {toggleShowTodoForm} = showTodoFormSlice.actions;
 export const store = configureStore({
   reducer: {
     todo: todoSlice.reducer,

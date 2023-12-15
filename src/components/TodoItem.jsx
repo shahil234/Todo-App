@@ -1,17 +1,27 @@
 import React, { useState } from "react";
 import { FaTrash } from "react-icons/fa";
 import { MdModeEdit } from "react-icons/md";
-import { useDispatch } from "react-redux";
-import { updateTodoItem, deleteTodoItem} from "../utils/store.js";
+import { useDispatch, useSelector } from "react-redux";
+import { updateTodoItem, deleteTodoItem, toggleShowTodoForm} from "../utils/store.js";
 
 
 function TodoItem({ status, text, id }) {
   const dispatch = useDispatch();
+  const showForm = useSelector(state => state.showTodoForm.show);
   const [isCompleted, setIsCompleted] = useState(status);
+  const [updatedTodoText, setUpdatedTodoText] = useState("");
 
   const handleRemoveTodo = () => {
     dispatch(deleteTodoItem({ id }));
   };
+  const handleUpdateTodo = () =>{
+    const newTodo = {
+      id,
+      isCompleted,
+      text: updatedTodoText
+    }
+    dispatch(updateTodoItem(newTodo));
+  }
   return (
     <div className="flex flex-row items-center md:px-4 md:py-2 px-2 py-1 space-x-0 bg-white">
       <section className="flex w-[90%] justify-start space-x-2">
@@ -38,7 +48,9 @@ function TodoItem({ status, text, id }) {
         >
           <FaTrash />
         </div>
-        <div className="w-7 h-7 text-xl text-[#585858] bg-[#EEEEEE] flex items-center justify-center cursor-pointer rounded-sm">
+        <div
+          onClick={() => dispatch(toggleShowTodoForm())}
+        className="w-7 h-7 text-xl text-[#585858] bg-[#EEEEEE] flex items-center justify-center cursor-pointer rounded-sm">
           <MdModeEdit />
         </div>
       </section>
